@@ -1,9 +1,12 @@
 package com.api.library.books.CONTROLLER;
 
+import ch.qos.logback.classic.net.SimpleSocketServer;
 import com.api.library.books.MODEL.Book;
 import com.api.library.books.TEMPOBOOKSERVICE.BOOKSERVICE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +20,14 @@ public class LIBRARY_CONTROLLER {
     BOOKSERVICE bookservice;
 
     @GetMapping("/library")
-    public List<Book> getLibrary() {
+    public ResponseEntity<List<Book>> getLibrary() {
 
-        return bookservice.Getallbooks();
+            List<Book> abhi = bookservice.Getallbooks();
+            if(abhi.size()<=0){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        }
+            return ResponseEntity.status(HttpStatus.OK).body(abhi);
     }
 
     @GetMapping("/library/{id}")
@@ -30,10 +38,14 @@ public class LIBRARY_CONTROLLER {
     }
 
     @PostMapping("/library")
-    public Book addbook(@RequestBody Book b) {
-        Book bk = bookservice.addbook(b);
+    public ResponseEntity<Book> addbook(@RequestBody Book b) {
+      try{  Book bk = bookservice.addbook(b);
         System.out.println(bk);
-        return bk;
+        return ResponseEntity.status(HttpStatus.CREATED).build();}
+      catch(Exception e){
+          System.out.println(e);
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+      }
 
     }
 
