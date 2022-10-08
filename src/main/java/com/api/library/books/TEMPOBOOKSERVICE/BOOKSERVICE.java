@@ -1,48 +1,58 @@
 package com.api.library.books.TEMPOBOOKSERVICE;
-import java.util.*;
+
 import com.api.library.books.MODEL.Book;
+
+
+import com.api.library.books.Repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.List;
 
-@Component("api")
+
+
+@Component
 
 public class BOOKSERVICE {
-    private static List<Book> books = new ArrayList<>();
-    static{
-        books.add(new Book(1, "Java", "John"));
-      books.add(new Book(2, "C++", "John"));
-       books.add(new Book(3, "C#", "John"));
+   private final BookRepository d;
+    @Autowired
+    public BOOKSERVICE(BookRepository d) {
+        this.d = d;
     }
+
+    //    private static List<Book> books = new ArrayList<>();
+//    static{
+//        books.add(new Book(1, "Java", "John"));
+//      books.add(new Book(2, "C++", "John"));
+//       books.add(new Book(3, "C#", "John"));
+//    }
    public List<Book> Getallbooks(){
-            return books;
+            return d.findAll();
    }
    public Book getbyid(int id){
         Book book= new Book();
-     book= books.stream().filter(x->x.getBook_id()==id).findFirst().get();
+     book= d.findById(id);
 
         return book;
    }
    public Book addbook(Book book ){
-        books.add(book);
+        d.save(book);
         return book;
    }
    public Book bookupdate(int id,Book b){
 
-       books=books.stream().map(x->{
-            if(x.getBook_id()==id){
-                x.setBook_name(b.getBook_name());
-                x.setBook_author(b.getBook_author());
-            }
-            return x;
-        }).collect(Collectors.toList());
-       return b;
+     Book h=d.findById(id);
+        h.setBook_name(b.getBook_name());
+        h.setBook_author(b.getBook_author());
+        return h;
 
    }
 public void deletebook(int id){
         //books.removeIf(x->x.getBook_id()==id);
-       books=books.stream().filter(x->x.getBook_id()!=id).collect(Collectors.toList());
+        d.deleteById(id);
+}
+public void deleteall(){
+        d.deleteAll();
 }
 
 }

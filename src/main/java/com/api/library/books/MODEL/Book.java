@@ -1,17 +1,30 @@
 package com.api.library.books.MODEL;
 
-public class Book {
-    private int book_id;
-    private String book_name;
-    private String book_author;
 
-    public Book(int book_id, String book_name, String book_author) {
-        this.book_id = book_id;
-        this.book_name = book_name;
-        this.book_author = book_author;
+
+
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "Book")
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "book_id")
+    private int book_id;
+    @Column(name = "book_name")
+    private String book_name;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Author book_author;
+    public Author getBook_author() {
+        return book_author;
     }
 
-    public Book() {
+    public void setBook_author(Author book_author) {
+        this.book_author = book_author;
     }
 
     public int getBook_id() {
@@ -30,13 +43,9 @@ public class Book {
         this.book_name = book_name;
     }
 
-    public String getBook_author() {
-        return book_author;
-    }
 
-    public void setBook_author(String book_author) {
-        this.book_author = book_author;
-    }
+
+
 
     @Override
     public String toString() {
